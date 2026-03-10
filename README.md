@@ -18,7 +18,7 @@ There's also a Jupyter notebook (`notebook.ipynb`) that walks through everything
 Given a univariate time series with binary incident labels:
 
 - **Input (X):** a sliding window of the last `W = 30` metric values (+ 7 hand-crafted statistical features)
-- **Output (y):** binary label — `1` if **any** of the next `H = 5` time steps is an incident, `0` otherwise
+- **Output (y):** binary label -`1` if **any** of the next `H = 5` time steps is an incident, `0` otherwise
 
 This converts the time-series forecasting problem into a standard tabular binary classification task.
 
@@ -29,10 +29,10 @@ This converts the time-series forecasting problem into a standard tabular binary
 
 ## Dataset
 
-Synthetic time series (10,000 points) that simulates a server metric (e.g., CPU usage):
+Synthetic time series (10,000 points) that simulates a server metric (example: CPU usage):
 - **Normal behavior:** noisy sine wave with slight upward trend
 - **Incidents:** random spikes of magnitude 2–4x above normal, lasting 5–15 steps
-- **Incident rate:** ~6–8% of all time steps
+- **Incident rate:** 6–8% of all time steps
 
 I chose synthetic data because it lets me control the signal-to-noise ratio and incident frequency. The concepts transfer directly to real monitoring data.
 
@@ -48,7 +48,7 @@ Both are from scikit-learn. I also add a `StandardScaler` in the pipeline (not s
 ### Hand-crafted features
 On top of the 30 raw window values, I add:
 - mean, std, max, min of the window
-- slope (last value − first value)
+- slope (last value - first value)
 - recent vs. old mean (last 5 values vs. first 5)
 - 90th percentile
 
@@ -56,10 +56,10 @@ These help the tree models pick up on distributional changes without needing dee
 
 ## Evaluation
 
-- **Chronological train/test split** (80/20) — no shuffling, to avoid data leakage
+- **Chronological train/test split** (80/20) - no shuffling, to avoid data leakage
 - **Metrics:** Precision, Recall, F1-score, ROC-AUC
-- **Confusion matrix** — to see false positives vs. missed incidents
-- **Threshold sweep** — shows how precision/recall trade off at different alert thresholds
+- **Confusion matrix** - to see false positives vs. missed incidents
+- **Threshold sweep** - shows how precision/recall trade off at different alert thresholds
 
 ### Why these metrics?
 In an alerting system:
@@ -75,18 +75,17 @@ In an alerting system:
 ├── model.py            # model definitions (RF, Gradient Boosting)
 ├── evaluate.py         # metrics, plots, threshold analysis
 ├── main.py             # run everything end-to-end
-├── notebook.ipynb      # interactive walkthrough with plots
 ├── requirements.txt
 └── results/            # saved plots (created by main.py)
 ```
 
 ## Limitations
 
-- Synthetic data has a very clear signal — real incidents are subtler
-- Single metric only — production systems have many correlated metrics
-- No temporal modeling (we flatten the window) — an LSTM or Transformer could capture order dependencies
-- Class imbalance would be much worse in real data (~0.1% incident rate)
-- Only one train/test split — walk-forward cross-validation would be more rigorous
+- Synthetic data has a very clear signal, real incidents are subtler
+- Single metric only, production systems have many correlated metrics
+- No temporal modeling (we flatten the window), an LSTM or Transformer could capture order dependencies
+- Class imbalance would be much worse in real data (approx. 0.1% incident rate)
+- Only one train/test split, walk-forward cross-validation would be more rigorous
 
 ## Possible Extensions for Production
 
